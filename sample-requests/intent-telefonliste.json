@@ -8,16 +8,6 @@
             "firstname": "Walter"
         },
         "allRequiredParamsPresent": true,
-        "fulfillmentText": "oje, das ist noch nicht implementiert. Kommt aber bald",
-        "fulfillmentMessages": [
-            {
-                "text": {
-                    "text": [
-                        "oje, das ist noch nicht implementiert. Kommt aber bald"
-                    ]
-                }
-            }
-        ],
         "intent": {
             "name": "projects/kreamont-abf6b/agent/intents/a29900c3-e37c-4ac8-9503-04190a89b8c1",
             "displayName": "GetPersonData"

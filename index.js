@@ -61,7 +61,7 @@ function processV2Request(request, response) {
       calendarService.fulfill(sendResponse);
     },
     'GetPersonDataFromTelephoneList': () => {
-      telefonlisteService.fulfill(sendResponse);
+      telefonlisteService.fulfill(parameters, sendResponse);
     },    
     // Default handler for unknown or undefined actions
     'default': () => {
