@@ -1,2 +1,6 @@
-npm install nodemon -g
-nodemon --watch app index.js
+
+## Development
+### Running - live reload
+    nodemon --watch app index.js
+### Running
+    npm start

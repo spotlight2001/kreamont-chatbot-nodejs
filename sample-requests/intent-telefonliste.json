@@ -1,0 +1,28 @@
+{
+    "responseId": "ab5b9c8e-0933-4c5d-940f-a4b9076ae81b",
+    "queryResult": {
+        "queryText": "wie ist die nummer von walter muritz?",
+        "action": "GetPersonDataFromTelephoneList",
+        "parameters": {
+            "lastname": "",
+            "firstname": "Walter"
+        },
+        "allRequiredParamsPresent": true,
+        "fulfillmentText": "oje, das ist noch nicht implementiert. Kommt aber bald",
+        "fulfillmentMessages": [
+            {
+                "text": {
+                    "text": [
+                        "oje, das ist noch nicht implementiert. Kommt aber bald"
+                    ]
+                }
+            }
+        ],
+        "intent": {
+            "name": "projects/kreamont-abf6b/agent/intents/a29900c3-e37c-4ac8-9503-04190a89b8c1",
+            "displayName": "GetPersonData"
+        },
+        "intentDetectionConfidence": 0.93,
+        "languageCode": "de"
+    }
+}

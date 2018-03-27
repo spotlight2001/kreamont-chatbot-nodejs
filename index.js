@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const DialogflowApp = require('actions-on-google').DialogflowApp; // Google Assistant helper library
 const newsService = require('./app/intent-news.service');
 const calendarService = require('./app/intent-calendar.service');
+const telefonlisteService = require('./app/intent-telefonliste.service');
+
 
 const restService = express();
 
@@ -58,6 +60,9 @@ function processV2Request(request, response) {
     'get_termine': () => {
       calendarService.fulfill(sendResponse);
     },
+    'GetPersonDataFromTelephoneList': () => {
+      telefonlisteService.fulfill(sendResponse);
+    },    
     // Default handler for unknown or undefined actions
     'default': () => {
       let responseToUser = {
