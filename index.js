@@ -28,7 +28,7 @@ restService.post("/api/dialogflow-webhook", function (request, response) {
 /*
 * Function to handle v2 webhook requests from Dialogflow
 */
-function processV2Request (request, response) {
+function processV2Request(request, response) {
   // An action is a string used to identify what needs to be done in fulfillment
   let action = (request.body.queryResult.action) ? request.body.queryResult.action : 'default';
   // Parameters are any entites that Dialogflow has extracted from the request.
@@ -43,7 +43,7 @@ function processV2Request (request, response) {
   const actionHandlers = {
     // The default welcome intent has been matched, welcome the user (https://dialogflow.com/docs/events#default_welcome_intent)
     'input.welcome': () => {
-      sendResponse('Hello, Welcome to my Dialogflow agent!'); // Send simple response to user
+      sendResponse('Hello, Welcome to my Dialogflow agent! ...'); // Send simple response to user
     },
     // The default fallback intent has been matched, try to recover (https://dialogflow.com/docs/intents#fallback_intents)
     'input.unknown': () => {
@@ -67,10 +67,10 @@ function processV2Request (request, response) {
   // Run the proper handler function to handle the request from Dialogflow
   actionHandlers[action]();
   // Function to send correctly formatted responses to Dialogflow which are then sent to the user
-  function sendResponse (responseToUser) {
+  function sendResponse(responseToUser) {
     // if the response is a string send it as a response to the user
     if (typeof responseToUser === 'string') {
-      let responseJson = {fulfillmentText: responseToUser}; // displayed response
+      let responseJson = { fulfillmentText: responseToUser }; // displayed response
       response.json(responseJson); // Send response to Dialogflow
     } else {
       // If the response to the user includes rich responses or contexts send them to Dialogflow
