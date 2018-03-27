@@ -8,10 +8,11 @@
   },
   "author": "Walter Mauritz",
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "express": "^4.13.4",
     "actions-on-google": "^1.5.x",
     "apiai": "^4.0.3",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "moment": "^2.21.0",
     "request": "^2.85.0"
   }
 }

@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const DialogflowApp = require('actions-on-google').DialogflowApp; // Google Assistant helper library
 const newsService = require('./app/intent-news.service');
+const calendarService = require('./app/intent-calendar.service');
 
 const restService = express();
 
@@ -53,6 +54,9 @@ function processV2Request(request, response) {
     },
     'GetNewsFromWordpress': () => {
       newsService.fulfill(sendResponse);
+    },
+    'get_termine': () => {
+      calendarService.fulfill(sendResponse);
     },
     // Default handler for unknown or undefined actions
     'default': () => {
