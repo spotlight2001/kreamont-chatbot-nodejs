@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const DialogflowApp = require('actions-on-google').DialogflowApp; // Google Assistant helper library
+const newsService = require('./app/intent-news.service');
 
 const restService = express();
 
@@ -49,6 +50,9 @@ function processV2Request(request, response) {
     'input.unknown': () => {
       // Use the Actions on Google lib to respond to Google requests; for other requests use JSON
       sendResponse('I\'m having trouble, can you try that again?'); // Send simple response to user
+    },
+    'GetNewsFromWordpress': () => {
+      newsService.fulfill(sendResponse);
     },
     // Default handler for unknown or undefined actions
     'default': () => {

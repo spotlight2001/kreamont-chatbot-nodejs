@@ -1,0 +1,18 @@
+{
+    "responseId": "8554ee1f-6856-4c52-93e9-99a984d7505b",
+    "queryResult": {
+      "queryText": "was gibts neues?",
+      "action": "GetNewsFromWordpress",
+      "parameters": {},
+      "allRequiredParamsPresent": true,
+      "intent": {
+        "name": "projects/kreamont-abf6b/agent/intents/fe2c13a1-2e3f-48eb-a15a-660501c16807",
+        "displayName": "get_news"
+      },
+      "intentDetectionConfidence": 1,
+      "diagnosticInfo": {
+        "webhook_latency_ms": 249
+      },
+      "languageCode": "de"
+    }
+  }
