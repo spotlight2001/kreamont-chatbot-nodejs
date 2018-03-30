@@ -62,7 +62,7 @@ function processV2Request(request, response) {
     },
     'GetPersonDataFromTelephoneList': () => {
       telefonlisteService.fulfill(parameters, sendResponse);
-    },    
+    },
     // Default handler for unknown or undefined actions
     'default': () => {
       let responseToUser = {
@@ -81,13 +81,21 @@ function processV2Request(request, response) {
   actionHandlers[action]();
   // Function to send correctly formatted responses to Dialogflow which are then sent to the user
   function sendResponse(responseToUser) {
+
+    let responseJson = {
+      payload: {
+        google: {
+          expectUserResponse: true
+        }
+      }
+    };
+
     // if the response is a string send it as a response to the user
     if (typeof responseToUser === 'string') {
-      let responseJson = { fulfillmentText: responseToUser }; // displayed response
+      responseJson.fulfillmentText = responseToUser; // displayed response
       response.json(responseJson); // Send response to Dialogflow
     } else {
       // If the response to the user includes rich responses or contexts send them to Dialogflow
-      let responseJson = {};
       // Define the text response
       responseJson.fulfillmentText = responseToUser.fulfillmentText;
       // Optional: add rich messages for integrations (https://dialogflow.com/docs/rich-messages)
