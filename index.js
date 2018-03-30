@@ -85,7 +85,7 @@ function processV2Request(request, response) {
     let responseJson = {
       payload: {
         google: {
-          expectUserResponse: true
+          expectUserResponse: false
         }
       }
     };
