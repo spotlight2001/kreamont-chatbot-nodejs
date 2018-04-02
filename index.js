@@ -6,6 +6,7 @@ const DialogflowApp = require('actions-on-google').DialogflowApp; // Google Assi
 const newsService = require('./app/intent-news.service');
 const calendarService = require('./app/intent-calendar.service');
 const telefonlisteService = require('./app/intent-telefonliste.service');
+const userService = require('./app/user.service');
 
 
 const restService = express();
@@ -43,6 +44,9 @@ function processV2Request(request, response) {
   let requestSource = (request.body.originalDetectIntentRequest) ? request.body.originalDetectIntentRequest.source : undefined;
   // Get the session ID to differentiate calls from different users
   let session = (request.body.session) ? request.body.session : undefined;
+
+  const user = userService.getUser(request);
+
   // Create handlers for Dialogflow actions as well as a 'default' handler
   const actionHandlers = {
     // The default welcome intent has been matched, welcome the user (https://dialogflow.com/docs/events#default_welcome_intent)
@@ -61,7 +65,7 @@ function processV2Request(request, response) {
       calendarService.fulfill(sendResponse);
     },
     'GetPersonDataFromTelephoneList': () => {
-      telefonlisteService.fulfill(parameters, sendResponse);
+      telefonlisteService.fulfill(parameters, sendResponse, user);
     },
     // Default handler for unknown or undefined actions
     'default': () => {
