@@ -1,5 +1,29 @@
 "use strict";
 
+const Fuse = require('fuse.js');
+const telefonlisteClient = require('./telefonliste.client');
+
+let emailIndex = undefined;
+
+function init() {
+    telefonlisteClient.getPersons().then(function(persons) {
+        emailIndex = new Fuse(persons, {
+            shouldSort: false,
+            threshold: 0.0,
+            tokenize: false,
+            matchAllTokens: true,
+            keys: ['email']
+        });
+
+        let searchResultByEmail = emailIndex.search('waltermauritz@gmx.at');
+        console.log('test search result by email: ' + JSON.stringify(searchResultByEmail));
+        console.log('done indexing');
+    }).catch(function(error) {
+        console.error(error);
+    });
+};
+init();
+
 exports.getUser = function (request) {
     console.log('try get user from request');
     const requestUserStr = request.body.originalDetectIntentRequest.payload.user;
@@ -14,5 +38,8 @@ exports.getUser = function (request) {
     console.log('user: ' + jsonStr);
     const user = JSON.parse(jsonStr);
     console.log('user email: ' + user.email);
+
+    let persons = emailIndex.search(user.email);
+    user.isKreamont = persons.length >= 0 || user.email === 'walter.mauritz@gmail.com';
     return user;
 };

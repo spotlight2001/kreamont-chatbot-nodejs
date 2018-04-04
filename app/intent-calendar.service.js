@@ -1,39 +1,46 @@
 "use strict";
 
-const http = require("https");
+const _ = require('lodash');
+const http = require("request-promise-native");
 const moment = require('moment');
+const userService = require('./user.service');
 
-exports.fulfill = function(sendResponse) {
-
-    let url = 'https://clients6.google.com/calendar/v3/calendars/32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com/events?calendarId=32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com&singleEvents=true&timeZone=Europe/Vienna&maxAttendees=1&maxResults=3&sanitizeHtml=true&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs&timeMin=';
+exports.fulfill = function (request, sendResponse) {
+    let url = undefined;
+    let user = userService.getUser(request);
 
     // 2018-02-26T00:00:00+01:00
     let dateParam = moment().startOf('day');
     dateParam = dateParam.format("YYYY-MM-DD[T]00:00:00+01:00");
     dateParam = encodeURIComponent(dateParam);
-    url += dateParam;
-    console.log('url: ' + url);
 
-    http.get(url, function(res){
-        var body = '';
-    
-        res.on('data', function(chunk){
-            body += chunk;
-        });
+    let publicCalendarPromise = http.get({ json: true, uri: 'https://clients6.google.com/calendar/v3/calendars/32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com/events?singleEvents=true&timeZone=Europe/Vienna&maxResults=3&sanitizeHtml=true&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs&timeMin=' + dateParam });
+    let privateCalendarPromise = http.get({ json: true, uri: 'https://clients6.google.com/calendar/v3/calendars/4gvh2mvg0lh96d1o0g0k19jon4@group.calendar.google.com/events?singleEvents=true&timeZone=Europe/Vienna&maxResults=3&sanitizeHtml=true&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs&timeMin=' + dateParam });
+    let promises = [publicCalendarPromise];
+    if (user && user.isKreamont) {
+        promises.push(privateCalendarPromise);
+    }
 
-        res.on('end', function(){
-            var response = JSON.parse(body);
-            console.log("Got a response: ", response);
-            let result = 'Die nächsten Termine: \n';
-            for (let i = 0; i < response.items.length; i++) {
-                let item = response.items[i];
-                let date = item.start.date;
-                let title = item.summary;
-                result += date + ' ' + title + '\n';
+    Promise.all([publicCalendarPromise, privateCalendarPromise]).then(function (calendars) {
+        let appointments = [];
+        for(let calendar of calendars) {
+            for (let appointment of calendar.items) {
+                appointments.push(appointment);
             }
-            sendResponse(result);
-        });
-    }).on('error', function(e){
-          console.log("Got an error: ", e);
+        }
+        appointments = _.sortBy(appointments, ['start.date']);
+        appointments = appointments.slice(0,3);
+        console.log('got appointments: ' + appointments.length);
+        let result = 'Die nächsten Termine: \n';
+        for(let appointment of appointments) {
+            console.log(appointment.start.date);
+            let date = appointment.start.date;
+            let title = appointment.summary;
+            result += date + ' ' + title + '\n';
+        }        
+        sendResponse(result);
+        for (let i = 0; i < response.items.length; i++) {
+
+        }
     });
 };
