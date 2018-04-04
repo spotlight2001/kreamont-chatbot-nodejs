@@ -11,7 +11,7 @@ function init() {
     telefonlisteClient.getPersons().then(function(persons) {
         nameIndex = new Fuse(persons, {
             shouldSort: true,
-            threshold: 0.3,
+            threshold: 0.1,
             tokenize: true,
             matchAllTokens: true,
             keys: ['index']
