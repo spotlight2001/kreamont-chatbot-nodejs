@@ -2,7 +2,6 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const DialogflowApp = require('actions-on-google').DialogflowApp; // Google Assistant helper library
 const newsService = require('./app/intent-news.service');
 const calendarService = require('./app/intent-calendar.service');
 const telefonlisteService = require('./app/intent-telefonliste.service');

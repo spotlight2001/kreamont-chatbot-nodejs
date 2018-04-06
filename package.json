@@ -8,16 +8,11 @@
   },
   "author": "Walter Mauritz",
   "dependencies": {
-    "actions-on-google": "^1.5.x",
-    "apiai": "^4.0.3",
-    "axios": "^0.18.0",
-    "body-parser": "^1.15.0",
     "csvtojson": "^1.1.9",
     "express": "^4.13.4",
     "fuse.js": "^3.2.0",
     "lodash": "^4.17.5",
     "moment": "^2.21.0",
-    "request": "^2.85.0",
     "request-promise-native": "^1.0.5"
   }
 }
