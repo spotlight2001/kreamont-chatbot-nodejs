@@ -1,23 +1,14 @@
 "use strict";
 
-const http = require("http");
+const http = require("request-promise-native");
 
 exports.fulfill = function(sendResponse) {
-
     const url = 'http://www.kreamont.at/wp-json/wp/v2/posts?per_page=1';    
-    http.get(url, function(res){
-        var body = '';
-    
-        res.on('data', function(chunk){
-            body += chunk;
-        });
-    
-        res.on('end', function(){
-            var response = JSON.parse(body);
-            console.log("Got a response: ", response);
-            sendResponse(response[0].title.rendered); // WARN: no news = empty array breaks this code
-        });
-    }).on('error', function(e){
-          console.log("Got an error: ", e);
+    http.get({ json: true, uri: url }).then(function(news) {
+        if (news.length <= 0) {
+            sendResponse('Leider hab ich keine Neuigkeiten gefunden');
+            return;
+        }
+        sendResponse(news[0].title.rendered);
     });
 };

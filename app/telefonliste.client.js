@@ -2,7 +2,7 @@
 
 const csv = require('csvtojson');
 const _ = require('lodash');
-const http = require('https');
+const http = require('request-promise-native');
 
 let persons = undefined;
 
@@ -15,33 +15,22 @@ function getEnv(key) {
 }
 
 function getTelefonlisteCsv() {
-    return new Promise(function (resolve, reject) {
-        const username = getEnv('KREAMONT_USER');
-        const password = getEnv('KREAMONT_PASSWORD');
-        console.log(`username: '${username}', password: '${password}'`);
-        const url = `https://${username}:${password}@www.kreamont.at/telefonliste/telefonliste.csv`;
+    const username = getEnv('KREAMONT_USER');
+    const password = getEnv('KREAMONT_PASSWORD');
+    console.log(`username: '${username}', password: '${password}'`);
+    const url = `https://${username}:${password}@www.kreamont.at/telefonliste/telefonliste.csv`;    
+    return http.get(url);
+}
 
-        http.get(url, function (res) {
-            var body = '';
-
-            res.on('data', function (chunk) {
-                body += chunk;
-            });
-
-            res.on('end', function () {
-                let csvStr = body;
-                let rows = csvStr.split('\n');
-                rows.shift();
-                rows.shift();
-                rows.unshift('kind.nachname;kind.vorname;schulstufe;lehrer;festnetz;mutter.vorname;mutter.nachname;mutter.mobil;vater.vorname;vater.nachname;vater.mobil;mutter.email;vater.email;strasse;hausnummer;plz;ort;gps')
-                console.log('csv rows: ' + rows.length);
-                csvStr = rows.join('\n');
-                resolve(csvStr);
-            });
-        }).on('error', function (e) {
-            console.log("Got an error: ", e);
-            reject(e);
-        })
+function replaceCsvHeader(csvStr) {
+    return new Promise(function(resolve, reject) {
+        let rows = csvStr.split('\n');
+        rows.shift();
+        rows.shift();
+        rows.unshift('kind.nachname;kind.vorname;schulstufe;lehrer;festnetz;mutter.vorname;mutter.nachname;mutter.mobil;vater.vorname;vater.nachname;vater.mobil;mutter.email;vater.email;strasse;hausnummer;plz;ort;gps')
+        console.log('csv rows: ' + rows.length);
+        csvStr = rows.join('\n');
+        resolve(csvStr);
     });
 }
 
@@ -69,5 +58,5 @@ function csvToJson(csvStr) {
 };
 
 exports.getPersons = function () {
-    return getTelefonlisteCsv().then(csvToJson);
+    return getTelefonlisteCsv().then(replaceCsvHeader).then(csvToJson);
 };
