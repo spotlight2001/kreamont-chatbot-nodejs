@@ -26,14 +26,17 @@ init();
 
 exports.getUser = function (request) {
     console.log('try get user from request');
-    const requestUserStr = request.body.originalDetectIntentRequest.payload.user;
+    const requestUserStr = request.body.originalRequest.data.user;
     if (! requestUserStr) {
+        console.warn('there is no user in originalRequest.data');
         return null;
     }
     const jwt = requestUserStr.idToken;
     if (! jwt) {
+        console.warn('there is no JWT');
         return null;
     }
+    console.log(`jwt: "${jwt}"`)
     const jsonStr = Buffer.from(jwt.split('.')[1], 'base64');
     console.log('user: ' + jsonStr);
     const user = JSON.parse(jsonStr);

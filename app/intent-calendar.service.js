@@ -14,7 +14,7 @@ var getUrl = (calendarId) => {
     return url;
 }
 
-exports.fulfill = function (request, sendResponse) {
+exports.fulfill = function (request, dialogflowApp) {
     let url = undefined;
     let user = userService.getUser(request);
     let publicCalendarPromise = http.get({ json: true, uri: getUrl('32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com') });
@@ -35,15 +35,13 @@ exports.fulfill = function (request, sendResponse) {
         appointments = appointments.slice(0, 3);
         console.log('got appointments: ' + appointments.length);
         let result = 'Die nächsten Termine: \n';
+        let richResponse = dialogflowApp.getIncomingRichResponse();
         for (let appointment of appointments) {
-            console.log(appointment.start.date);
+            console.log(`appointment start date: ${appointment.start.date}.`);
             let date = appointment.start.date;
             let title = appointment.summary;
-            result += date + ' ' + title + '\n';
+            richResponse.addSimpleResponse(date + ' ' + title);
         }
-        sendResponse(result);
-        for (let i = 0; i < response.items.length; i++) {
-
-        }
+        dialogflowApp.tell(richResponse);
     });
 };

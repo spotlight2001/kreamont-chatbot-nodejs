@@ -4,10 +4,12 @@
   "description": "Webhook echo sample",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "debug": "nodemon --inspect --watch . --watch app index.js"
   },
   "author": "Walter Mauritz",
   "dependencies": {
+    "actions-on-google": "^1.10.0",
     "csvtojson": "^1.1.9",
     "express": "^4.13.4",
     "fuse.js": "^3.2.0",

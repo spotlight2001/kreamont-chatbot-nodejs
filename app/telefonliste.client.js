@@ -15,7 +15,7 @@ function getEnv(key) {
 }
 
 function getTelefonlisteCsv() {
-    const username = getEnv('KREAMONT_USER');
+    const username = 'eltern';
     const password = getEnv('KREAMONT_PASSWORD');
     console.log(`username: '${username}', password: '${password}'`);
     const url = `https://${username}:${password}@www.kreamont.at/telefonliste/telefonliste.csv`;    
