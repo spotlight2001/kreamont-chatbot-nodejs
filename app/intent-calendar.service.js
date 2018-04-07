@@ -5,7 +5,7 @@ const http = require("request-promise-native");
 const moment = require('moment');
 const userService = require('./user.service');
 
-function getUrl(calendarId) {
+var getUrl = (calendarId) => {
     // 2018-02-26T00:00:00+01:00
     let dateParam = moment().startOf('day');
     dateParam = dateParam.format("YYYY-MM-DD[T]00:00:00+01:00");
