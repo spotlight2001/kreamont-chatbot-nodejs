@@ -12,7 +12,6 @@ exports.fulfill = function (sendResponse) {
             text = news[0].title.rendered;
         }
         let result = {
-            fulfillmentText: text,
             fulfillmentMessages: [
                 {
                     "card": {
