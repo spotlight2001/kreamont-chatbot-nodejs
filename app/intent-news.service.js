@@ -12,22 +12,18 @@ exports.fulfill = function (sendResponse) {
         let info = news[0];
         let result = {
             fulfillmentMessages: [{
-                'platform': 'ACTIONS_ON_GOOGLE',
-                'basic_card': {
-                    'title': 'News',
-                    'subtitle': 'von der Homepage',
-                    'formatted_text': info.title.rendered,
-                    'buttons': [
-                        {
-                            'title': 'Zum Artikel',
-                            'open_uri_action': {
-                                'uri': info.link
-                            }
-                        }
-                    ]
+                platform: 'ACTIONS_ON_GOOGLE',
+                text: {
+                    text: [info.title.rendered]
                 }
             },
-            ]
+            {
+                platform: 'ACTIONS_ON_GOOGLE',
+                linkOutSuggestion: {
+                    destinationName: 'Zum Artikel',
+                    uri: info.link
+                }
+            }]
         };
         sendResponse(result);
     });
