@@ -1,7 +1,7 @@
 {
-  "name": "webhook-echo-sample",
-  "version": "1.0.0",
-  "description": "Webhook echo sample",
+  "name": "kreamont-dialogflow-webhook",
+  "version": "0.1.0",
+  "description": "this is a REST backend for a google assistent chatbot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
