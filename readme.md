@@ -20,7 +20,7 @@ Check it out with your android device, using:
     git push heroku master
 
 ### Webhooks
-* https://kreamont-chatbot-v2.herokuapp.com/api/dialogflow-webhook
+* https://kreamont-chatbot.herokuapp.com/api/dialogflow-webhook
 * https://predator.this-is-rocket.science/chatbot/api/dialogflow-webhook
 
 ### Useful dev links

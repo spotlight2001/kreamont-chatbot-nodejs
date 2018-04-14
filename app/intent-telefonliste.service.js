@@ -88,10 +88,13 @@ exports.fulfill = function (request, dialogflowApp) {
     persons.forEach(function (person) {
         const title = getName(person) + ' anrufen';
         const url = 'https://www.kreamont.at/telefonliste/anrufen.html?tel=' + getPhonenumber(person);
-        browseCarousel.addItems([dialogflowApp.buildBrowseItem(title, url)]);
+        const imageUrl = 'http://www.kreamont.at/telefonliste/avatars/thumbs/' + encodeURIComponent(`${person.nachname} ${person.vorname}.jpg`);
+        browseCarousel.addItems([dialogflowApp.buildBrowseItem(title, url)
+            .setImage(imageUrl, getName(person))]);
     });
     let telefonlisteUrl = 'https://www.kreamont.at/telefonliste/?q=' + concatenate(params.firstname, params.lastname);
-    browseCarousel.addItems([dialogflowApp.buildBrowseItem('Telefonliste öffnen', telefonlisteUrl)]);
+    browseCarousel.addItems([dialogflowApp.buildBrowseItem('Telefonliste öffnen', telefonlisteUrl)
+        .setImage('https://www.uni-wuerzburg.de/fileadmin/news_import/kreamont_logo.jpg', 'Logo von Kreamont')]);
     richResponse.addBrowseCarousel(browseCarousel);
     dialogflowApp.tell(richResponse);
 };
