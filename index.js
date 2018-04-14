@@ -30,7 +30,7 @@ restService.post("/api/dialogflow-webhook", function (request, response) {
   const actions = new Map();
   actions.set('GetNewsFromWordpress', () => newsService.fulfill(dialogflowApp));
   actions.set('get_termine', () => calendarService.fulfill(request, dialogflowApp));
-  actions.set('GetPersonDataFromTelephoneList', () => telefonlisteService.fulfill(request, dialogflowApp));
+  actions.set('get_person', () => telefonlisteService.fulfill(request, dialogflowApp));
   actions.set('sign_in_result', () => {
     if (dialogflowApp.getSignInStatus() === dialogflowApp.SignInStatus.OK) {
       let parametersFromIntentBeforeLogin = dialogflowApp.getContext('intent_before_login').parameters.parameters;
