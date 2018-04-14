@@ -5,6 +5,8 @@ const Fuse = require('fuse.js');
 const telefonlisteClient = require('./telefonliste.client');
 const userService = require('./user.service');
 const INTENT_GET_PERSON_DATA = 'intent_get_person_data';
+const { Responses } = require('actions-on-google');
+
 
 let nameIndex = undefined;
 
@@ -24,15 +26,45 @@ function init() {
 };
 init();
 
-exports.fulfill = function (request, dialogflowApp) {
-    if (dialogflowApp.getSignInStatus() !== dialogflowApp.SignInStatus.OK) {
-        dialogflowApp.setContext('intent_before_login', null, request.body.result);
-        dialogflowApp.askForSignIn();
-        return;
+function getName(person) {
+    var result = '';
+    if (person.vorname) {
+        result += person.vorname;
     }
+    if (person.nachname) {
+        result += ' ' + person.nachname;
+    }
+    return result;
+};
+
+function concatenate() {
+    console.log(JSON.stringify(arguments));
+    let result = '';
+    for (let argument of arguments) {
+        if (! argument) {
+            continue;
+        }
+        result += ' ' + argument;
+    }
+    result = result.trim(); 
+    return result;
+}
+
+function getPhonenumber(person) {
+    console.log('getPhonenumber arguments: ' + JSON.stringify(arguments));
+    let phonenumber = person.mobil;
+    if (! phonenumber) {
+        return null;
+    }
+    phonenumber = phonenumber.replace(/[ /-]/, '');
+    return phonenumber;
+};
+
+exports.fulfill = function (request, dialogflowApp) {
     let user = userService.getUser(request);
     if (! user) {
-        console.error('no user.');
+        dialogflowApp.setContext('intent_before_login', null, request.body.result);
+        dialogflowApp.askForSignIn();
         return;
     }
     if (!user.isKreamont) {
@@ -41,17 +73,27 @@ exports.fulfill = function (request, dialogflowApp) {
     }
 
     let params = request.body.result.parameters || {};
-    console.log('searching now params: ' + JSON.stringify());
+    console.log('searching now params: ' + JSON.stringify(params));
     let persons = nameIndex.search(_.trim(`${params.firstname} ${params.lastname}`));
     console.log('found matches: ' + persons.length);
     if (persons.length <= 0) {
         dialogflowApp.tell('Hab leider niemanden gefunden');
+        return;
     }
 
     console.log('found matches: ' + JSON.stringify(persons));
     let richResponse = dialogflowApp.getIncomingRichResponse();
+    richResponse.addSimpleResponse(`Schau an wen ich gefunden hab:`);
     persons.forEach(function (person) {
-        richResponse.addSimpleResponse(`${person.vorname} ${person.nachname} ${person.mobil} ${person.email}`);
+        const card = new Responses.BasicCard();
+        card.formattedText = getName(person);
+        let phonenumber = getPhonenumber(person);
+        if (phonenumber) {
+            card.addButton('Anrufen', 'https://www.kreamont.at/telefonliste/anrufen.html?tel=' + phonenumber);            
+        }
+        richResponse.addBasicCard(card);
     });
-    dialogflowApp.tell(richResponse.addSuggestionLink('Telefonliste', 'https://www.kreamont.at/telefonliste'));
+
+    richResponse.addSuggestionLink('Telefonliste', 'https://www.kreamont.at/telefonliste/?q=' + concatenate(params.firstname, params.lastname));
+    dialogflowApp.tell(richResponse);
 };

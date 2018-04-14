@@ -26,7 +26,7 @@ init();
 
 exports.getUser = function (request) {
     console.log('try get user from request');
-    const requestUserStr = request.body.originalRequest.data.user;
+    const requestUserStr = request.body.originalRequest && request.body.originalRequest.data.user;
     if (! requestUserStr) {
         console.warn('there is no user in originalRequest.data');
         return null;
