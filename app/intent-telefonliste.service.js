@@ -41,19 +41,19 @@ function concatenate() {
     console.log(JSON.stringify(arguments));
     let result = '';
     for (let argument of arguments) {
-        if (! argument) {
+        if (!argument) {
             continue;
         }
         result += ' ' + argument;
     }
-    result = result.trim(); 
+    result = result.trim();
     return result;
 }
 
 function getPhonenumber(person) {
     console.log('getPhonenumber arguments: ' + JSON.stringify(arguments));
     let phonenumber = person.mobil;
-    if (! phonenumber) {
+    if (!phonenumber) {
         return null;
     }
     phonenumber = phonenumber.replace(/[ /-]/, '');
@@ -62,7 +62,7 @@ function getPhonenumber(person) {
 
 exports.fulfill = function (request, dialogflowApp) {
     let user = userService.getUser(request);
-    if (! user) {
+    if (!user) {
         dialogflowApp.setContext('intent_before_login', null, request.body.result);
         dialogflowApp.askForSignIn();
         return;
@@ -84,16 +84,14 @@ exports.fulfill = function (request, dialogflowApp) {
     console.log('found matches: ' + JSON.stringify(persons));
     let richResponse = dialogflowApp.getIncomingRichResponse();
     richResponse.addSimpleResponse(`Schau an wen ich gefunden hab:`);
+    let browseCarousel = dialogflowApp.buildBrowseCarousel();
     persons.forEach(function (person) {
-        const card = new Responses.BasicCard();
-        card.formattedText = getName(person);
-        let phonenumber = getPhonenumber(person);
-        if (phonenumber) {
-            card.addButton('Anrufen', 'https://www.kreamont.at/telefonliste/anrufen.html?tel=' + phonenumber);            
-        }
-        richResponse.addBasicCard(card);
+        const title = getName(person) + ' anrufen';
+        const url = 'https://www.kreamont.at/telefonliste/anrufen.html?tel=' + getPhonenumber(person);
+        browseCarousel.addItems([dialogflowApp.buildBrowseItem(title, url)]);
     });
-
-    richResponse.addSuggestionLink('Telefonliste', 'https://www.kreamont.at/telefonliste/?q=' + concatenate(params.firstname, params.lastname));
+    let telefonlisteUrl = 'https://www.kreamont.at/telefonliste/?q=' + concatenate(params.firstname, params.lastname);
+    browseCarousel.addItems([dialogflowApp.buildBrowseItem('Telefonliste öffnen', telefonlisteUrl)]);
+    richResponse.addBrowseCarousel(browseCarousel);
     dialogflowApp.tell(richResponse);
 };
