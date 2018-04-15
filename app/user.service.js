@@ -43,6 +43,7 @@ exports.getUser = function (request) {
     console.log('user email: ' + user.email);
 
     let persons = emailIndex.search(user.email);
-    user.isKreamont = persons.length >= 0 || user.email === 'walter.mauritz@gmail.com';
+    let emailWhitelist = ['walter.mauritz@gmail.com', 'mauritz.annemarie@gmail.com'];
+    user.isKreamont = persons.length >= 0 || emailWhitelist.some(user.email);
     return user;
 };
