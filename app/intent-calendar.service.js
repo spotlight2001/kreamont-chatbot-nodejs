@@ -16,15 +16,15 @@ var getUrl = (calendarId) => {
 
 exports.fulfill = function (request, dialogflowApp) {
     let url = undefined;
-    let user = userService.getUser(request);
-    let publicCalendarPromise = http.get({ json: true, uri: getUrl('32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com') });
-    let privateCalendarPromise = http.get({ json: true, uri: getUrl('4gvh2mvg0lh96d1o0g0k19jon4@group.calendar.google.com') });
-    let promises = [publicCalendarPromise];
-    if (user && user.isKreamont) {
-        promises.push(privateCalendarPromise);
-    }
-
-    Promise.all([publicCalendarPromise, privateCalendarPromise]).then(function (calendars) {
+    userService.getUser(request).then(function (user) {
+        let publicCalendarPromise = http.get({ json: true, uri: getUrl('32kbr4dsdljsqgpsromm2det5c@group.calendar.google.com') });
+        let privateCalendarPromise = http.get({ json: true, uri: getUrl('4gvh2mvg0lh96d1o0g0k19jon4@group.calendar.google.com') });
+        let promises = [publicCalendarPromise];
+        if (user && user.isKreamont) {
+            promises.push(privateCalendarPromise);
+        }
+        return Promise.all([publicCalendarPromise, privateCalendarPromise]);
+    }).then(function (calendars) {
         let appointments = [];
         for (let calendar of calendars) {
             for (let appointment of calendar.items) {
@@ -43,5 +43,8 @@ exports.fulfill = function (request, dialogflowApp) {
             richResponse.addSimpleResponse(date + ' ' + title);
         }
         dialogflowApp.tell(richResponse);
+    }).catch(function(error) {
+        console.error(error);
+        dialogflowApp.tell('Leider kaputt: ' + error);
     });
 };

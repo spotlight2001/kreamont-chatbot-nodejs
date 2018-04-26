@@ -2,6 +2,7 @@
 
 const Fuse = require('fuse.js');
 const telefonlisteClient = require('./telefonliste.client');
+const http = require('request-promise-native');
 
 let emailIndex = undefined;
 
@@ -25,25 +26,39 @@ function init() {
 init();
 
 exports.getUser = function (request) {
-    console.log('try get user from request');
-    const requestUserStr = request.body.originalRequest && request.body.originalRequest.data.user;
-    if (! requestUserStr) {
-        console.warn('there is no user in originalRequest.data');
-        return null;
-    }
-    const jwt = requestUserStr.idToken;
-    if (! jwt) {
-        console.warn('there is no JWT');
-        return null;
-    }
-    console.log(`jwt: "${jwt}"`)
-    const jsonStr = Buffer.from(jwt.split('.')[1], 'base64');
-    console.log('user: ' + jsonStr);
-    const user = JSON.parse(jsonStr);
-    console.log('user email: ' + user.email);
-
-    let persons = emailIndex.search(user.email);
-    let emailWhitelist = ['walter.mauritz@gmail.com', 'mauritz.annemarie@gmail.com'];
-    user.isKreamont = persons.length >= 0 || emailWhitelist.some(user.email);
-    return user;
+    return new Promise(function(resolve, reject) {
+        console.log('try get user from request');
+        const requestUserStr = request.body.originalRequest && request.body.originalRequest.data.user;
+        if (! requestUserStr) {
+            console.warn('there is no user in originalRequest.data');
+            resolve(null);
+        }
+        const idToken = requestUserStr.idToken;
+        const accessToken = requestUserStr.accessToken;
+        if (! idToken) {
+            if (! accessToken) {
+                console.warn('there is no idToken, nor accessToken');
+                resolve(null);
+            }
+    
+            // use accessToken
+            http.get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken)
+            .then(function(user) {
+                resolve(user);
+            }).catch(function(error) {
+                console.error(error);
+                reject(error);
+            })
+        }
+        console.log(`jwt: "${jwt}"`)
+        const jsonStr = Buffer.from(jwt.split('.')[1], 'base64');
+        console.log('user: ' + jsonStr);
+        const user = JSON.parse(jsonStr);
+        console.log('user email: ' + user.email);
+    
+        let persons = emailIndex.search(user.email);
+        let emailWhitelist = ['walter.mauritz@gmail.com', 'mauritz.annemarie@gmail.com'];
+        user.isKreamont = persons.length >= 0 || emailWhitelist.some(user.email);
+        resolve(user);
+    });
 };
