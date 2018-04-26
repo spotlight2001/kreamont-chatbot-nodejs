@@ -52,7 +52,7 @@ exports.getUser = function (request) {
             }
     
             // use accessToken
-            http.get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken)
+            http.get({ json: true, uri: 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken})
             .then(function(user) {
                 resolve(createApplicationUser(user));
             }).catch(function(error) {
