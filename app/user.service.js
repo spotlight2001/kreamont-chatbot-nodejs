@@ -34,7 +34,9 @@ exports.getUser = function (request) {
             resolve(null);
         }
         const idToken = requestUserStr.idToken;
+        console.debug('idToken: ' + idToken);
         const accessToken = requestUserStr.accessToken;
+        console.debug('accessToken: ' + accessToken);
         if (! idToken) {
             if (! accessToken) {
                 console.warn('there is no idToken, nor accessToken');
@@ -48,10 +50,10 @@ exports.getUser = function (request) {
             }).catch(function(error) {
                 console.error(error);
                 reject(error);
-            })
+            });
+            return;
         }
-        console.log(`jwt: "${jwt}"`)
-        const jsonStr = Buffer.from(jwt.split('.')[1], 'base64');
+        const jsonStr = Buffer.from(idToken.split('.')[1], 'base64');
         console.log('user: ' + jsonStr);
         const user = JSON.parse(jsonStr);
         console.log('user email: ' + user.email);
