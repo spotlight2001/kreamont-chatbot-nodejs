@@ -25,6 +25,14 @@ function init() {
 };
 init();
 
+function createApplicationUser(user) {
+    console.log('user email: ' + user.email);    
+    let persons = emailIndex.search(user.email);
+    let emailWhitelist = ['walter.mauritz@gmail.com', 'mauritz.annemarie@gmail.com'];
+    user.isKreamont = persons.length >= 0 || emailWhitelist.some(user.email);
+    return user;
+}
+
 exports.getUser = function (request) {
     return new Promise(function(resolve, reject) {
         console.log('try get user from request');
@@ -46,7 +54,7 @@ exports.getUser = function (request) {
             // use accessToken
             http.get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken)
             .then(function(user) {
-                resolve(user);
+                resolve(createApplicationUser(user));
             }).catch(function(error) {
                 console.error(error);
                 reject(error);
@@ -55,12 +63,7 @@ exports.getUser = function (request) {
         }
         const jsonStr = Buffer.from(idToken.split('.')[1], 'base64');
         console.log('user: ' + jsonStr);
-        const user = JSON.parse(jsonStr);
-        console.log('user email: ' + user.email);
-    
-        let persons = emailIndex.search(user.email);
-        let emailWhitelist = ['walter.mauritz@gmail.com', 'mauritz.annemarie@gmail.com'];
-        user.isKreamont = persons.length >= 0 || emailWhitelist.some(user.email);
-        resolve(user);
+        const user = JSON.parse(jsonStr);        
+        resolve(createApplicationUser(user));
     });
 };
